@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundMint — Turn Your Music Into NFTs & Build Your Token Economy</title>
+    <meta name="description" content="The complete music NFT platform for artists. Upload songs, mint NFTs, deploy your own fan token, and sell directly to your audience on Base network.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue: #0052FF;
+            --blue-dark: #003ECB;
+            --blue-light: #3370FF;
+            --purple: #8B5CF6;
+            --pink: #EC4899;
+            --green: #10B981;
+            --bg: #0A0B0F;
+            --bg2: #12131A;
+            --card: #1A1B23;
+            --border: #2A2B35;
+            --text: #FFFFFF;
+            --text2: #9CA3AF;
+            --text3: #6B7280;
+            --gradient: linear-gradient(135deg, #0052FF 0%, #8B5CF6 100%);
+            --gradient2: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background effects */
+        .bg-glow {
+            position: fixed; inset: 0; z-index: 0;
+            pointer-events: none; overflow: hidden;
+        }
+        .bg-glow .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(120px); opacity: 0.12;
+            animation: orbFloat 25s infinite ease-in-out;
+        }
+        .bg-glow .orb:nth-child(1) { width: 700px; height: 700px; background: var(--blue); top: -200px; left: -150px; }
+        .bg-glow .orb:nth-child(2) { width: 600px; height: 600px; background: var(--purple); bottom: -100px; right: -150px; animation-delay: -8s; }
+        .bg-glow .orb:nth-child(3) { width: 500px; height: 500px; background: var(--pink); top: 40%; left: 50%; animation-delay: -16s; }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(40px,-30px) scale(1.08); }
+            66% { transform: translate(-30px,40px) scale(0.92); }
+        }
+
+        .wrapper { position: relative; z-index: 1; }
+
+        /* Nav */
+        nav {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 48px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10,11,15,0.7);
+            backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 12px; }
+        .nav-logo {
+            width: 40px; height: 40px;
+            background: var(--gradient); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .nav-brand h1 {
+            font-size: 18px; font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px 32px; border-radius: 10px;
+            font-size: 16px; font-weight: 700; font-family: inherit;
+            border: none; cursor: pointer; text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        .btn-primary {
+            background: var(--gradient); color: white;
+            box-shadow: 0 4px 20px rgba(0,82,255,0.35);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,82,255,0.45); }
+        .btn-outline {
+            background: transparent; color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover { border-color: var(--blue); background: rgba(0,82,255,0.05); }
+        .btn-lg { padding: 18px 40px; font-size: 18px; border-radius: 12px; }
+        .btn-xl { padding: 22px 56px; font-size: 20px; border-radius: 14px; }
+
+        /* Sections */
+        section { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+
+        /* Hero */
+        .hero { text-align: center; padding-top: 120px; padding-bottom: 80px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 20px; border-radius: 100px;
+            background: rgba(0,82,255,0.1); border: 1px solid rgba(0,82,255,0.2);
+            font-size: 13px; font-weight: 600; color: var(--blue-light);
+            margin-bottom: 32px;
+        }
+        .hero-badge .pulse {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(16,185,129,0.6);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.3); }
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 72px);
+            font-weight: 900;
+            line-height: 1.08;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+        .hero h1 .gradient {
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero h1 .gradient2 {
+            background: var(--gradient2);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-sub {
+            font-size: 20px; color: var(--text2);
+            max-width: 640px; margin: 0 auto 48px;
+            line-height: 1.7;
+        }
+        .hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .hero-price {
+            margin-top: 20px;
+            font-size: 14px; color: var(--text3);
+        }
+        .hero-price strong { color: var(--text); font-size: 16px; }
+
+        /* Social Proof */
+        .social-proof {
+            display: flex; align-items: center; justify-content: center;
+            gap: 40px; padding: 40px 0; flex-wrap: wrap;
+            opacity: 0.6;
+        }
+        .social-proof span { font-size: 13px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+
+        /* Screenshot */
+        .screenshot-wrap {
+            max-width: 1100px; margin: 0 auto 80px;
+            padding: 0 48px;
+            position: relative;
+        }
+        .screenshot {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4), var(--blue) 0 0 0 0;
+            transition: box-shadow 0.4s;
+            padding: 32px;
+        }
+        .screenshot:hover { box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 60px rgba(0,82,255,0.1); }
+        .screenshot-header {
+            display: flex; gap: 8px; margin-bottom: 24px;
+        }
+        .screenshot-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .screenshot-dot:nth-child(1) { background: #EF4444; }
+        .screenshot-dot:nth-child(2) { background: #F59E0B; }
+        .screenshot-dot:nth-child(3) { background: #10B981; }
+        .screenshot-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+        }
+        .mini-stat {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px;
+        }
+        .mini-stat-icon { font-size: 24px; margin-bottom: 12px; }
+        .mini-stat-val { font-size: 22px; font-weight: 800; }
+        .mini-stat-label { font-size: 12px; color: var(--text3); }
+        .screenshot-cards {
+            margin-top: 16px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+        }
+        .mini-nft {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+        }
+        .mini-nft-cover {
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            font-size: 48px;
+        }
+        .mini-nft-cover:nth-child(1) { background: linear-gradient(135deg, #0052FF, #8B5CF6); }
+        .mini-nft-info { padding: 12px; }
+        .mini-nft-title { font-size: 13px; font-weight: 700; }
+        .mini-nft-sub { font-size: 11px; color: var(--text3); }
+        .mini-nft-price { font-size: 14px; font-weight: 800; color: var(--blue); margin-top: 8px; }
+
+        /* Features */
+        .features { text-align: center; }
+        .section-label {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--blue-light);
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 800; letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+        .section-sub {
+            font-size: 18px; color: var(--text2);
+            max-width: 600px; margin: 0 auto 64px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px; text-align: left;
+        }
+        .feature-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px;
+            transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gradient); opacity: 0; transition: opacity 0.3s;
+        }
+        .feature-card:hover { border-color: var(--blue-light); transform: translateY(-4px); }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin-bottom: 20px;
+        }
+        .feature-icon.blue { background: rgba(0,82,255,0.12); }
+        .feature-icon.purple { background: rgba(139,92,246,0.12); }
+        .feature-icon.pink { background: rgba(236,72,153,0.12); }
+        .feature-icon.green { background: rgba(16,185,129,0.12); }
+        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .feature-card p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+        /* How It Works */
+        .how-it-works { text-align: center; }
+        .steps {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 32px; margin-top: 64px; text-align: center;
+        }
+        .step-num {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--gradient); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 800;
+            margin: 0 auto 20px;
+        }
+        .step h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .step p { font-size: 14px; color: var(--text2); }
+
+        /* What You Get */
+        .included { text-align: center; }
+        .included-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 16px; text-align: left; max-width: 800px;
+            margin: 0 auto;
+        }
+        .included-item {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 20px; background: var(--card);
+            border: 1px solid var(--border); border-radius: 12px;
+        }
+        .included-check {
+            width: 28px; height: 28px; border-radius: 8px;
+            background: rgba(16,185,129,0.12); color: var(--green);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 800; flex-shrink: 0;
+        }
+        .included-item h4 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .included-item p { font-size: 13px; color: var(--text3); }
+
+        /* Pricing */
+        .pricing { text-align: center; }
+        .price-card {
+            max-width: 560px; margin: 0 auto;
+            background: var(--card); border: 2px solid var(--blue);
+            border-radius: 24px; padding: 48px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 0 60px rgba(0,82,255,0.12);
+        }
+        .price-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--gradient);
+        }
+        .price-badge {
+            display: inline-block; padding: 6px 16px;
+            background: var(--gradient); border-radius: 100px;
+            font-size: 12px; font-weight: 700; color: white;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        .price-amount {
+            font-size: 72px; font-weight: 900;
+            letter-spacing: -3px; line-height: 1;
+            margin-bottom: 8px;
+        }
+        .price-amount sup { font-size: 36px; vertical-align: super; }
+        .price-period { font-size: 16px; color: var(--text3); margin-bottom: 32px; }
+        .price-divider {
+            height: 1px; background: var(--border);
+            margin: 32px 0;
+        }
+        .price-features {
+            list-style: none; text-align: left;
+            margin-bottom: 40px;
+        }
+        .price-features li {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 0; font-size: 15px; color: var(--text2);
+        }
+        .price-features li .check {
+            color: var(--green); font-size: 16px; font-weight: 800;
+        }
+
+        /* Guarantee */
+        .guarantee {
+            max-width: 700px; margin: 60px auto 0;
+            text-align: center;
+            padding: 40px; background: var(--card);
+            border: 1px solid var(--border); border-radius: 20px;
+        }
+        .guarantee-icon { font-size: 48px; margin-bottom: 16px; }
+        .guarantee h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .guarantee p { font-size: 15px; color: var(--text2); line-height: 1.7; }
+
+        /* FAQ */
+        .faq { text-align: center; }
+        .faq-list {
+            max-width: 720px; margin: 0 auto; text-align: left;
+        }
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            padding: 24px 0;
+        }
+        .faq-q {
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .faq-q .arrow { font-size: 20px; color: var(--text3); transition: transform 0.3s; }
+        .faq-a {
+            font-size: 15px; color: var(--text2); line-height: 1.7;
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s;
+        }
+        .faq-item.open .faq-a { max-height: 300px; padding-top: 16px; }
+        .faq-item.open .arrow { transform: rotate(45deg); }
+
+        /* CTA */
+        .final-cta {
+            text-align: center; padding: 120px 48px;
+            position: relative;
+        }
+        .final-cta h2 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 900; letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+        .final-cta p {
+            font-size: 18px; color: var(--text2);
+            max-width: 540px; margin: 0 auto 40px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center; padding: 40px 48px;
+            border-top: 1px solid var(--border);
+            font-size: 13px; color: var(--text3);
+        }
+        footer a { color: var(--blue-light); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            nav { padding: 16px 24px; }
+            .nav-links { display: none; }
+            section { padding: 60px 24px; }
+            .screenshot-wrap { padding: 0 24px; }
+            .screenshot-grid { grid-template-columns: 1fr 1fr; }
+            .screenshot-cards { grid-template-columns: 1fr 1fr; }
+            .steps { grid-template-columns: 1fr 1fr; }
+            .included-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .screenshot-grid { grid-template-columns: 1fr; }
+            .screenshot-cards { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr; }
+            .price-amount { font-size: 56px; }
+            .hero-cta { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<div class="wrapper">
+
+<!-- Nav -->
+<nav>
+    <div class="nav-brand">
+        <div class="nav-logo">🎵</div>
+        <h1>SoundMint</h1>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#included">What's Included</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="#pricing" class="btn btn-primary">Get SoundMint — $1,000</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-badge">
+        <span class="pulse"></span>
+        Built on Base Network &middot; Powered by Thirdweb
+    </div>
+    <h1>
+        Turn Your Music Into<br>
+        <span class="gradient">NFTs</span> & Build Your<br>
+        <span class="gradient2">Token Economy</span>
+    </h1>
+    <p class="hero-sub">
+        The complete platform for music artists to upload songs, mint NFTs, deploy custom fan tokens, and sell directly to your audience — no coding required.
+    </p>
+    <div class="hero-cta">
+        <a href="#pricing" class="btn btn-primary btn-xl">Get Instant Access — $1,000</a>
+        <a href="#features" class="btn btn-outline btn-lg">See All Features ↓</a>
+    </div>
+    <p class="hero-price">One-time purchase &middot; Lifetime license &middot; Full source code</p>
+</section>
+
+<!-- Social Proof -->
+<div class="social-proof">
+    <span>🔵 Base Network</span>
+    <span>⚡ Thirdweb SDK</span>
+    <span>🦊 MetaMask Ready</span>
+    <span>📦 IPFS Storage</span>
+    <span>🔌 WordPress Plugin</span>
+</div>
+
+<!-- Screenshot -->
+<div class="screenshot-wrap">
+    <div class="screenshot">
+        <div class="screenshot-header">
+            <div class="screenshot-dot"></div>
+            <div class="screenshot-dot"></div>
+            <div class="screenshot-dot"></div>
+        </div>
+        <div class="screenshot-grid">
+            <div class="mini-stat">
+                <div class="mini-stat-icon">🎵</div>
+                <div class="mini-stat-val">24</div>
+                <div class="mini-stat-label">Songs Uploaded</div>
+            </div>
+            <div class="mini-stat">
+                <div class="mini-stat-icon">💿</div>
+                <div class="mini-stat-val">18</div>
+                <div class="mini-stat-label">NFTs Minted</div>
+            </div>
+            <div class="mini-stat">
+                <div class="mini-stat-icon">💰</div>
+                <div class="mini-stat-val">4.82 ETH</div>
+                <div class="mini-stat-label">Revenue</div>
+            </div>
+            <div class="mini-stat">
+                <div class="mini-stat-icon">🪙</div>
+                <div class="mini-stat-val">1M</div>
+                <div class="mini-stat-label">Token Supply</div>
+            </div>
+        </div>
+        <div class="screenshot-cards">
+            <div class="mini-nft">
+                <div class="mini-nft-cover" style="background:linear-gradient(135deg,#0052FF,#8B5CF6);">🎵</div>
+                <div class="mini-nft-info">
+                    <div class="mini-nft-title">Midnight Dreams</div>
+                    <div class="mini-nft-sub">100 editions</div>
+                    <div class="mini-nft-price">0.05 ETH</div>
+                </div>
+            </div>
+            <div class="mini-nft">
+                <div class="mini-nft-cover" style="background:linear-gradient(135deg,#EC4899,#8B5CF6);">🎶</div>
+                <div class="mini-nft-info">
+                    <div class="mini-nft-title">Electric Soul</div>
+                    <div class="mini-nft-sub">50 editions</div>
+                    <div class="mini-nft-price">0.08 ETH</div>
+                </div>
+            </div>
+            <div class="mini-nft">
+                <div class="mini-nft-cover" style="background:linear-gradient(135deg,#10B981,#0052FF);">🎤</div>
+                <div class="mini-nft-info">
+                    <div class="mini-nft-title">Future Waves</div>
+                    <div class="mini-nft-sub">25 editions</div>
+                    <div class="mini-nft-price">0.12 ETH</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features -->
+<section class="features" id="features">
+    <span class="section-label">⚡ FEATURES</span>
+    <h2 class="section-title">Everything You Need to Monetize Your Music On-Chain</h2>
+    <p class="section-sub">A complete artist toolkit — from uploading tracks to building a fan token economy.</p>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon blue">🎵</div>
+            <h3>Upload & Mint Music NFTs</h3>
+            <p>Drag-and-drop audio files and cover art. We handle IPFS uploads and ERC-1155 minting on Base — one click and your song lives on-chain forever.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon purple">🪙</div>
+            <h3>Deploy Your Own Fan Token</h3>
+            <p>Launch a custom ERC-20 token on Base in seconds. Create a fan economy — accept your token as payment for NFTs, reward loyal listeners, and airdrop to supporters.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon pink">🏪</div>
+            <h3>Built-In Marketplace</h3>
+            <p>List your music NFTs for sale in ETH or your custom token. Set prices, manage inventory, approve transfers — all from one dashboard.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon green">📊</div>
+            <h3>Sales Analytics Dashboard</h3>
+            <p>Track revenue, unique buyers, and sales history in real-time. Every transaction links directly to the blockchain explorer for full transparency.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon blue">🎧</div>
+            <h3>Integrated Audio Player</h3>
+            <p>Preview any minted track with the built-in player. Play, pause, seek — with progress bar, timestamps, and continuous playback across pages.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon purple">🔌</div>
+            <h3>WordPress Plugin Included</h3>
+            <p>Drop-in WordPress plugin with admin panel, 6 shortcodes, database tables, and AJAX handlers. Add SoundMint to any WordPress site in minutes.</p>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works" id="how">
+    <span class="section-label">🚀 HOW IT WORKS</span>
+    <h2 class="section-title">From Track to Token in 4 Steps</h2>
+    <p class="section-sub">No blockchain experience needed. If you can drag a file, you can mint an NFT.</p>
+
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <h4>Connect Wallet</h4>
+            <p>Click "Connect Wallet" — MetaMask auto-switches to Base network. One click, done.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <h4>Upload Your Song</h4>
+            <p>Drag your audio file and cover art. Add title, artist, genre, editions, and price.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <h4>Mint as NFT</h4>
+            <p>Hit "Mint" — audio and metadata upload to IPFS, then your ERC-1155 NFT goes live on Base.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">4</div>
+            <h4>Sell & Earn</h4>
+            <p>List on the marketplace. Accept ETH or your custom token. Track every sale in your dashboard.</p>
+        </div>
+    </div>
+</section>
+
+<!-- What's Included -->
+<section class="included" id="included">
+    <span class="section-label">📦 WHAT'S INCLUDED</span>
+    <h2 class="section-title">Full Source Code. Two Versions. Zero Limits.</h2>
+    <p class="section-sub">Everything you need to launch, customize, and scale.</p>
+
+    <div class="included-grid">
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>Standalone Web Dashboard</h4>
+                <p>Full SPA — works in any browser, no backend needed</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>WordPress Plugin (.zip)</h4>
+                <p>Admin panel, shortcodes, DB tables, AJAX — ready to install</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>ERC-1155 Music NFT Minting</h4>
+                <p>Multi-edition NFTs with audio, cover art, metadata on IPFS</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>ERC-20 Token Deployment</h4>
+                <p>One-click fan token launch with mint & airdrop tools</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>NFT Marketplace System</h4>
+                <p>List, sell, and manage NFTs with ETH or token pricing</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>Sales & Revenue Analytics</h4>
+                <p>Dashboard stats, sales history, unique buyer tracking</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>MetaMask Integration</h4>
+                <p>Auto chain switching, account detection, event listeners</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>Full Source Code + License</h4>
+                <p>Modify, rebrand, resell — it's yours forever</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>Base Network Optimized</h4>
+                <p>Low gas fees on Coinbase L2 — mainnet & Sepolia testnet</p>
+            </div>
+        </div>
+        <div class="included-item">
+            <div class="included-check">✓</div>
+            <div>
+                <h4>Comprehensive Documentation</h4>
+                <p>README with setup, configuration, and deployment guides</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+    <span class="section-label">💎 PRICING</span>
+    <h2 class="section-title">One Price. Everything Included.</h2>
+    <p class="section-sub">No subscriptions. No hidden fees. One payment, lifetime access.</p>
+
+    <div class="price-card">
+        <div class="price-badge">Complete Platform</div>
+        <div class="price-amount"><sup>$</sup>1,000</div>
+        <p class="price-period">One-time payment &middot; Lifetime license</p>
+
+        <div class="price-divider"></div>
+
+        <ul class="price-features">
+            <li><span class="check">✓</span> Standalone dashboard (HTML/CSS/JS)</li>
+            <li><span class="check">✓</span> WordPress plugin with admin panel</li>
+            <li><span class="check">✓</span> ERC-1155 music NFT minting engine</li>
+            <li><span class="check">✓</span> ERC-20 token deployment & management</li>
+            <li><span class="check">✓</span> Built-in NFT marketplace</li>
+            <li><span class="check">✓</span> IPFS storage via Thirdweb</li>
+            <li><span class="check">✓</span> MetaMask wallet integration</li>
+            <li><span class="check">✓</span> Sales analytics & tracking</li>
+            <li><span class="check">✓</span> Audio player with streaming</li>
+            <li><span class="check">✓</span> Full source code — modify & rebrand</li>
+            <li><span class="check">✓</span> Base mainnet + Sepolia testnet</li>
+            <li><span class="check">✓</span> Documentation & setup guide</li>
+        </ul>
+
+        <a href="mailto:digitalprophets@proton.me?subject=SoundMint%20Purchase%20-%20%241%2C000&body=I%20want%20to%20purchase%20the%20SoundMint%20Music%20NFT%20Platform%20for%20%241%2C000.%0A%0APlease%20send%20payment%20details." class="btn btn-primary btn-xl" style="width:100%;">
+            Buy Now — $1,000
+        </a>
+
+        <p style="margin-top:16px; font-size:13px; color:var(--text3);">
+            Secure checkout &middot; Instant delivery &middot; 30-day money-back guarantee
+        </p>
+    </div>
+
+    <!-- Guarantee -->
+    <div class="guarantee">
+        <div class="guarantee-icon">🛡️</div>
+        <h3>30-Day Money-Back Guarantee</h3>
+        <p>If SoundMint doesn't meet your expectations, email us within 30 days for a full refund. No questions asked. We're confident you'll love it — but the safety net is there if you need it.</p>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+    <span class="section-label">❓ FAQ</span>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+
+    <div class="faq-list">
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                What do I need to get started?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">A MetaMask wallet, a free Thirdweb account (for your Client ID), and some ETH on Base for gas fees. That's it — no coding, no server, no blockchain experience needed.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Do I need to know how to code?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">No. The standalone version works by opening a single HTML file. The WordPress version installs like any plugin — upload the ZIP, activate, configure in the admin panel. Full source code is included if you want to customize.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                What blockchain does this run on?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">Base — Coinbase's Layer 2 network built on Ethereum. Gas fees are extremely low (fractions of a cent), transactions are fast, and it's fully EVM compatible. Both mainnet and Sepolia testnet are supported.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Can I accept my own fan token as payment?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">Yes! You can deploy your own ERC-20 token directly from the dashboard, then list NFTs for sale in your custom token or ETH. You can also mint more tokens and airdrop them to fans.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Is this a subscription?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">No. It's a one-time $1,000 payment. You get the full source code, both versions (standalone + WordPress), lifetime license, and the freedom to modify, rebrand, or even resell it.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Where is the music stored?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">Audio files, cover art, and NFT metadata are uploaded to IPFS via Thirdweb's storage API. IPFS is a decentralized, permanent storage network — your music lives on-chain and can never be taken down.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                Can I use this on my existing WordPress site?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">Absolutely. Upload the plugin ZIP, activate it, and use shortcodes like [soundmint_dashboard] on any page. All CSS is scoped to avoid conflicts with your theme. Requires WordPress 5.8+ and PHP 7.4+.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+                What if I want a refund?
+                <span class="arrow">+</span>
+            </div>
+            <div class="faq-a">Email us within 30 days of purchase for a full refund, no questions asked. We stand behind the product 100%.</div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+    <h2>Ready to Own Your Music<br>on the Blockchain?</h2>
+    <p>Stop giving platforms 30-80% of your revenue. Mint NFTs, launch your token, and sell directly to your fans.</p>
+    <a href="#pricing" class="btn btn-primary btn-xl">Get SoundMint — $1,000</a>
+    <p style="margin-top:16px; font-size:14px; color:var(--text3);">One-time payment &middot; Full source code &middot; 30-day guarantee</p>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 SoundMint by <a href="https://digitalprophets.blog">Digital Prophets</a> &middot; Built on Base &middot; Powered by Thirdweb</p>
+</footer>
+
+</div>
+
+</body>
+</html>
