@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundMint — Music NFT Platform for Artists</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-effects">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="app-wrapper">
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="logo">🎵</div>
+                <div>
+                    <h1>SoundMint</h1>
+                    <span class="network-badge">Base Network</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <button class="nav-item active" data-page="dashboard">
+                        <span class="icon">📊</span> Dashboard
+                    </button>
+                    <button class="nav-item" data-page="upload">
+                        <span class="icon">⬆️</span> Upload Music
+                    </button>
+                    <button class="nav-item" data-page="my-nfts">
+                        <span class="icon">💿</span> My NFTs
+                        <span class="badge" id="nftCountBadge">0</span>
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Marketplace</div>
+                    <button class="nav-item" data-page="marketplace">
+                        <span class="icon">🏪</span> Sell Music
+                    </button>
+                    <button class="nav-item" data-page="sales">
+                        <span class="icon">💰</span> Sales History
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Token</div>
+                    <button class="nav-item" data-page="token">
+                        <span class="icon">🪙</span> Artist Token
+                    </button>
+                    <button class="nav-item" data-page="token-sales">
+                        <span class="icon">🛒</span> Token Sales
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <button class="nav-item" data-page="settings">
+                        <span class="icon">⚙️</span> Settings
+                    </button>
+                </div>
+            </nav>
+
+            <div class="sidebar-wallet">
+                <div class="wallet-status" id="walletStatus" onclick="MusicNFT.connectWallet()">
+                    <div class="wallet-dot" id="walletDot"></div>
+                    <div class="wallet-info">
+                        <div class="wallet-label">Wallet</div>
+                        <div class="wallet-address" id="walletAddress">Connect Wallet</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============ MAIN CONTENT ============ -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h2 id="pageTitle">Dashboard</h2>
+                <div class="top-bar-actions">
+                    <button class="btn btn-secondary btn-sm" id="networkInfo">
+                        🔵 Base Network
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="MusicNFT.connectWallet()" id="connectBtn">
+                        Connect Wallet
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: DASHBOARD ============ -->
+            <div class="page-content page" id="page-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">🎵</div>
+                        <div class="stat-value" id="statSongs">0</div>
+                        <div class="stat-label">Songs Uploaded</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">💿</div>
+                        <div class="stat-value" id="statNFTs">0</div>
+                        <div class="stat-label">NFTs Minted</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon pink">💰</div>
+                        <div class="stat-value" id="statRevenue">0 ETH</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">🪙</div>
+                        <div class="stat-value" id="statTokenSupply">0</div>
+                        <div class="stat-label">Token Supply</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Uploads</h3>
+                            <button class="btn btn-secondary btn-sm" data-page="upload">Upload New</button>
+                        </div>
+                        <div class="card-body" id="recentUploads">
+                            <p class="text-muted text-center" style="padding: 40px 0;">
+                                No songs uploaded yet. Upload your first track!
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Sales</h3>
+                            <button class="btn btn-secondary btn-sm" data-page="sales">View All</button>
+                        </div>
+                        <div class="card-body" id="recentSales">
+                            <p class="text-muted text-center" style="padding: 40px 0;">
+                                No sales yet. List your NFTs to start selling!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: UPLOAD MUSIC ============ -->
+            <div class="page-content page hidden" id="page-upload">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🎵 Upload & Mint Music NFT</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm" onsubmit="return false;">
+                            <!-- Audio Upload -->
+                            <div class="form-group">
+                                <label class="form-label">Audio File <span class="required">*</span></label>
+                                <div class="upload-zone" id="audioUploadZone">
+                                    <div class="upload-icon">🎶</div>
+                                    <div class="upload-text">
+                                        <h4>Drop your audio file here</h4>
+                                        <p>MP3, WAV, FLAC, AAC — Max 50MB</p>
+                                    </div>
+                                    <input type="file" id="audioFile" accept=".mp3,.wav,.flac,.aac,audio/*">
+                                </div>
+                                <div id="audioPreview" class="hidden"></div>
+                            </div>
+
+                            <!-- Cover Art Upload -->
+                            <div class="form-group">
+                                <label class="form-label">Cover Art <span class="required">*</span></label>
+                                <div class="upload-zone" id="coverUploadZone">
+                                    <div class="upload-icon">🎨</div>
+                                    <div class="upload-text">
+                                        <h4>Drop cover artwork here</h4>
+                                        <p>PNG, JPG, GIF, WEBP — Recommended 1000x1000px</p>
+                                    </div>
+                                    <input type="file" id="coverFile" accept=".png,.jpg,.jpeg,.gif,.webp,image/*">
+                                </div>
+                                <div id="coverPreview" class="hidden"></div>
+                            </div>
+
+                            <!-- Song Metadata -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Song Title <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="songTitle" placeholder="Enter song title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Artist Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="artistName" placeholder="Your artist name" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-textarea" id="songDescription" placeholder="Tell the story behind this track..."></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Genre</label>
+                                    <select class="form-select" id="songGenre">
+                                        <option value="">Select Genre</option>
+                                        <option value="hip-hop">Hip Hop</option>
+                                        <option value="rnb">R&B</option>
+                                        <option value="pop">Pop</option>
+                                        <option value="rock">Rock</option>
+                                        <option value="electronic">Electronic</option>
+                                        <option value="jazz">Jazz</option>
+                                        <option value="classical">Classical</option>
+                                        <option value="country">Country</option>
+                                        <option value="reggae">Reggae</option>
+                                        <option value="latin">Latin</option>
+                                        <option value="afrobeats">Afrobeats</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Number of Editions</label>
+                                    <input type="number" class="form-input" id="editions" value="100" min="1" max="10000" placeholder="100">
+                                    <div class="form-hint">How many copies of this NFT to mint</div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Price (ETH)</label>
+                                    <input type="number" class="form-input" id="nftPrice" value="0.01" min="0" step="0.001" placeholder="0.01">
+                                    <div class="form-hint">Price per edition in ETH on Base</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Royalty %</label>
+                                    <input type="number" class="form-input" id="royaltyPercent" value="10" min="0" max="50" placeholder="10">
+                                    <div class="form-hint">Royalty on secondary sales (max 50%)</div>
+                                </div>
+                            </div>
+
+                            <!-- Custom Token Pricing (optional) -->
+                            <div class="form-group">
+                                <label class="form-label">Accept Custom Token Payment?</label>
+                                <div style="display: flex; gap: 12px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                        <input type="checkbox" id="enableTokenPayment"> Accept artist token
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group hidden" id="tokenPriceGroup">
+                                <label class="form-label">Price in Artist Token</label>
+                                <input type="number" class="form-input" id="tokenPrice" value="100" min="1" placeholder="100">
+                                <div class="form-hint">Price per edition in your custom token</div>
+                            </div>
+
+                            <!-- Upload Progress -->
+                            <div id="mintProgress" class="hidden" style="margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span class="form-label" style="margin: 0;">Minting Progress</span>
+                                    <span class="form-label" style="margin: 0;" id="mintProgressText">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" id="mintProgressBar" style="width: 0%;"></div>
+                                </div>
+                                <div class="form-hint" id="mintStatusText">Preparing upload...</div>
+                            </div>
+
+                            <div style="display: flex; gap: 12px;">
+                                <button type="button" class="btn btn-primary btn-lg" id="mintBtn" onclick="MusicNFT.mintNFT()">
+                                    🎵 Mint Music NFT
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg" onclick="MusicNFT.previewNFT()">
+                                    👁️ Preview
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: MY NFTs ============ -->
+            <div class="page-content page hidden" id="page-my-nfts">
+                <div class="section-header">
+                    <h3>My Music NFTs</h3>
+                    <button class="btn btn-primary" data-page="upload">+ Upload New Song</button>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" data-tab="all">All</button>
+                    <button class="tab" data-tab="minted">Minted</button>
+                    <button class="tab" data-tab="listed">Listed</button>
+                    <button class="tab" data-tab="sold">Sold</button>
+                </div>
+
+                <div class="nft-grid" id="nftGrid">
+                    <p class="text-muted text-center" style="grid-column: 1/-1; padding: 60px 0;">
+                        No NFTs yet. Upload and mint your first song!
+                    </p>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: MARKETPLACE / SELL ============ -->
+            <div class="page-content page hidden" id="page-marketplace">
+                <div class="section-header">
+                    <h3>🏪 Sell Your Music NFTs</h3>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header">
+                        <h3>Create Listing</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">Select NFT to List</label>
+                            <select class="form-select" id="listNftSelect">
+                                <option value="">Choose an NFT...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Sale Type</label>
+                                <select class="form-select" id="saleType">
+                                    <option value="fixed">Fixed Price</option>
+                                    <option value="auction">Auction</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Currency</label>
+                                <select class="form-select" id="saleCurrency">
+                                    <option value="eth">ETH (Base)</option>
+                                    <option value="custom">Artist Token</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Price</label>
+                                <input type="number" class="form-input" id="listingPrice" value="0.01" min="0" step="0.001">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-input" id="listingQty" value="1" min="1">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="MusicNFT.createListing()">
+                            🏷️ Create Listing
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Active Listings</h3>
+                    </div>
+                    <div class="card-body" id="activeListings">
+                        <p class="text-muted text-center" style="padding: 40px 0;">
+                            No active listings. Create your first listing above!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: SALES HISTORY ============ -->
+            <div class="page-content page hidden" id="page-sales">
+                <div class="section-header">
+                    <h3>💰 Sales History</h3>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-icon green">💰</div>
+                        <div class="stat-value" id="totalSalesValue">0 ETH</div>
+                        <div class="stat-label">Total Sales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">🛒</div>
+                        <div class="stat-value" id="totalSalesCount">0</div>
+                        <div class="stat-label">Items Sold</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">👥</div>
+                        <div class="stat-value" id="uniqueBuyers">0</div>
+                        <div class="stat-label">Unique Buyers</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <table class="data-table" id="salesTable">
+                            <thead>
+                                <tr>
+                                    <th>Song</th>
+                                    <th>Buyer</th>
+                                    <th>Price</th>
+                                    <th>Currency</th>
+                                    <th>Date</th>
+                                    <th>TX</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted" style="padding: 40px;">
+                                        No sales recorded yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: ARTIST TOKEN ============ -->
+            <div class="page-content page hidden" id="page-token">
+                <div class="section-header">
+                    <h3>🪙 Artist Token</h3>
+                </div>
+
+                <!-- Token Info (shown when token exists) -->
+                <div id="tokenInfo" class="hidden">
+                    <div class="token-card" style="margin-bottom: 24px;">
+                        <div class="token-icon" id="tokenIconDisplay">🪙</div>
+                        <div class="token-details">
+                            <div class="token-name" id="tokenNameDisplay">—</div>
+                            <div class="token-symbol" id="tokenSymbolDisplay">—</div>
+                            <div class="token-supply" id="tokenSupplyDisplay">Supply: —</div>
+                        </div>
+                        <div>
+                            <div class="form-label">Contract Address</div>
+                            <div class="wallet-address" id="tokenContractDisplay" style="font-size: 12px;">—</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header"><h3>Mint More Tokens</h3></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Amount to Mint</label>
+                                    <input type="number" class="form-input" id="mintTokenAmount" value="1000" min="1">
+                                </div>
+                                <button class="btn btn-primary" onclick="MusicNFT.mintTokens()">🪙 Mint Tokens</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><h3>Airdrop Tokens</h3></div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Recipient Address</label>
+                                    <input type="text" class="form-input" id="airdropAddress" placeholder="0x...">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount</label>
+                                    <input type="number" class="form-input" id="airdropAmount" value="100" min="1">
+                                </div>
+                                <button class="btn btn-accent" onclick="MusicNFT.airdropTokens()">🎁 Airdrop</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deploy Token (shown when no token) -->
+                <div id="deployToken">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Deploy Your Artist Token</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted" style="margin-bottom: 24px;">
+                                Create your own ERC-20 token on Base. Fans can use this token to purchase your music NFTs directly!
+                            </p>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Token Name <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="tokenName" placeholder="e.g. Artist Coin">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Token Symbol <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="tokenSymbol" placeholder="e.g. ART" maxlength="6" style="text-transform: uppercase;">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Initial Supply</label>
+                                    <input type="number" class="form-input" id="tokenInitialSupply" value="1000000" min="1">
+                                    <div class="form-hint">Initial number of tokens to mint</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Description</label>
+                                    <input type="text" class="form-input" id="tokenDescription" placeholder="My artist token for fans">
+                                </div>
+                            </div>
+
+                            <div id="deployProgress" class="hidden" style="margin-bottom: 20px;">
+                                <div class="progress-bar">
+                                    <div class="progress" id="deployProgressBar" style="width: 0%;"></div>
+                                </div>
+                                <div class="form-hint" id="deployStatusText">Deploying token contract...</div>
+                            </div>
+
+                            <button class="btn btn-primary btn-lg" onclick="MusicNFT.deployToken()">
+                                🚀 Deploy Token on Base
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: TOKEN SALES ============ -->
+            <div class="page-content page hidden" id="page-token-sales">
+                <div class="section-header">
+                    <h3>🛒 Token-Based Sales</h3>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header">
+                        <h3>Configure Token-Gated Access</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted" style="margin-bottom: 20px;">
+                            Set up token-gated content and special pricing for fans who hold your artist token.
+                        </p>
+
+                        <div class="form-group">
+                            <label class="form-label">Minimum Token Balance for Discount</label>
+                            <input type="number" class="form-input" id="minTokenDiscount" value="100" min="1">
+                            <div class="form-hint">Fans holding this many tokens get a discount on NFT purchases</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Discount Percentage</label>
+                            <input type="number" class="form-input" id="tokenDiscountPercent" value="20" min="1" max="90">
+                        </div>
+
+                        <button class="btn btn-primary" onclick="MusicNFT.saveTokenGating()">
+                            💾 Save Token Gate Settings
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Token Holders</h3>
+                    </div>
+                    <div class="card-body" id="tokenHolders">
+                        <p class="text-muted text-center" style="padding: 40px 0;">
+                            Deploy your token first to see holders
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PAGE: SETTINGS ============ -->
+            <div class="page-content page hidden" id="page-settings">
+                <div class="section-header">
+                    <h3>⚙️ Settings</h3>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header">
+                        <h3>Artist Profile</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Artist / Brand Name</label>
+                                <input type="text" class="form-input" id="settingArtistName" placeholder="Your artist name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email (optional)</label>
+                                <input type="email" class="form-input" id="settingEmail" placeholder="you@example.com">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-textarea" id="settingBio" placeholder="Tell your fans about yourself..."></textarea>
+                        </div>
+                        <button class="btn btn-primary" onclick="MusicNFT.saveSettings()">💾 Save Profile</button>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header">
+                        <h3>Thirdweb Configuration</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">Thirdweb Client ID <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="settingClientId" placeholder="Enter your Thirdweb Client ID">
+                            <div class="form-hint">Get one free at <a href="https://thirdweb.com/dashboard" target="_blank" style="color: var(--base-blue);">thirdweb.com/dashboard</a></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Thirdweb Secret Key (optional, for server-side)</label>
+                            <input type="password" class="form-input" id="settingSecretKey" placeholder="Enter your Thirdweb Secret Key">
+                        </div>
+                        <button class="btn btn-primary" onclick="MusicNFT.saveThirdwebConfig()">💾 Save Config</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Contract Addresses</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label">NFT Collection Contract (ERC-1155)</label>
+                            <input type="text" class="form-input" id="settingNftContract" placeholder="Auto-deployed or paste existing">
+                            <div class="form-hint">Will be auto-created when you mint your first NFT</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Marketplace Contract</label>
+                            <input type="text" class="form-input" id="settingMarketplaceContract" placeholder="Auto-deployed or paste existing">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Artist Token Contract (ERC-20)</label>
+                            <input type="text" class="form-input" id="settingTokenContract" placeholder="Deploy via Token page or paste existing">
+                        </div>
+                        <button class="btn btn-primary" onclick="MusicNFT.saveContracts()">💾 Save Contracts</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ============ AUDIO PLAYER (fixed bottom) ============ -->
+    <div class="audio-player" id="audioPlayer">
+        <div class="now-playing">
+            <div class="thumb" id="playerThumb">🎵</div>
+            <div>
+                <div style="font-size: 14px; font-weight: 600;" id="playerTitle">—</div>
+                <div style="font-size: 12px; color: var(--text-muted);" id="playerArtist">—</div>
+            </div>
+        </div>
+        <div class="controls">
+            <button onclick="MusicNFT.playerPrev()">⏮</button>
+            <button class="play-pause" id="playerPlayBtn" onclick="MusicNFT.playerToggle()">▶</button>
+            <button onclick="MusicNFT.playerNext()">⏭</button>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" style="cursor: pointer;" onclick="MusicNFT.playerSeek(event)">
+                <div class="progress" id="playerProgress" style="width: 0;"></div>
+            </div>
+        </div>
+        <div class="time" id="playerTime">0:00 / 0:00</div>
+    </div>
+
+    <!-- ============ PREVIEW MODAL ============ -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>NFT Preview</h3>
+                <button class="modal-close" onclick="MusicNFT.closeModal('previewModal')">✕</button>
+            </div>
+            <div class="modal-body" id="previewContent"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="MusicNFT.closeModal('previewModal')">Close</button>
+                <button class="btn btn-primary" onclick="MusicNFT.mintNFT()">🎵 Mint Now</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audioElement"></audio>
+
+    <!-- Thirdweb SDK v5 -->
+    <script src="https://cdn.thirdweb.com/sdk/v5/latest/thirdweb.js"></script>
+    <!-- Main Application -->
+    <script src="js/app.js"></script>
+</body>
+</html>

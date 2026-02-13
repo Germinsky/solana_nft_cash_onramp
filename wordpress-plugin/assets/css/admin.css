@@ -1,0 +1,23 @@
+/* SoundMint - WordPress Admin Styles */
+
+.soundmint-stat-card {
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    border-top: 3px solid #0052FF;
+}
+
+.soundmint-stat-card h3 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e1e1e;
+    margin: 0 0 4px;
+}
+
+.soundmint-stat-card p {
+    font-size: 13px;
+    color: #757575;
+    margin: 0;
+}
