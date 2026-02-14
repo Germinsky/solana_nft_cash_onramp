@@ -59,9 +59,16 @@ const MusicNFT = (() => {
     if (CONFIG.TOKEN_CONTRACT) state.settings.tokenContract = CONFIG.TOKEN_CONTRACT;
 
     // ===================== HELPERS =====================
-    const root = document.getElementById('soundmint-app');
-    function $(sel) { return root ? root.querySelector(sel) : document.querySelector(sel); }
-    function $$(sel) { return root ? root.querySelectorAll(sel) : document.querySelectorAll(sel); }
+    function getRoot() { return document.getElementById('soundmint-app'); }
+    function $(sel) {
+        const r = getRoot();
+        return (r && r.querySelector(sel)) || document.querySelector(sel);
+    }
+    function $$(sel) {
+        const r = getRoot();
+        return r ? r.querySelectorAll(sel) : document.querySelectorAll(sel);
+    }
+    function byId(id) { return document.getElementById(id); }
 
     function getChainId() {
         return CONFIG.USE_TESTNET ? CONFIG.BASE_SEPOLIA_CHAIN_ID : CONFIG.BASE_CHAIN_ID;
@@ -406,17 +413,30 @@ const MusicNFT = (() => {
     async function mintNFT() {
         if (!state.address) { toast('Connect your wallet first', 'error'); return; }
 
-        const title = ($('#songTitle') || {}).value?.trim();
-        const artist = ($('#artistName') || {}).value?.trim();
-        const description = ($('#songDescription') || {}).value?.trim() || '';
-        const genre = ($('#songGenre') || {}).value || '';
-        const editions = parseInt(($('#editions') || {}).value) || 100;
-        const price = parseFloat(($('#nftPrice') || {}).value) || 0.01;
-        const royalty = parseInt(($('#royaltyPercent') || {}).value) || 10;
-        const acceptToken = ($('#enableTokenPayment') || {}).checked || false;
-        const tokenPrice = acceptToken ? parseFloat(($('#tokenPrice') || {}).value) : null;
+        const titleEl = byId('songTitle') || $('#songTitle');
+        const artistEl = byId('artistName') || $('#artistName');
+        const title = titleEl ? titleEl.value.trim() : '';
+        const artist = artistEl ? artistEl.value.trim() : '';
+        const descEl = byId('songDescription') || $('#songDescription');
+        const description = descEl ? descEl.value.trim() : '';
+        const genreEl = byId('songGenre') || $('#songGenre');
+        const genre = genreEl ? genreEl.value : '';
+        const editionsEl = byId('editions') || $('#editions');
+        const editions = parseInt(editionsEl ? editionsEl.value : '100') || 100;
+        const priceEl = byId('nftPrice') || $('#nftPrice');
+        const price = parseFloat(priceEl ? priceEl.value : '0.01') || 0.01;
+        const royaltyEl = byId('royaltyPercent') || $('#royaltyPercent');
+        const royalty = parseInt(royaltyEl ? royaltyEl.value : '10') || 10;
+        const tokenCb = byId('enableTokenPayment') || $('#enableTokenPayment');
+        const acceptToken = tokenCb ? tokenCb.checked : false;
+        const tokenPriceEl = byId('tokenPrice') || $('#tokenPrice');
+        const tokenPrice = acceptToken ? parseFloat(tokenPriceEl ? tokenPriceEl.value : '0') : null;
 
-        if (!title || !artist) { toast('Song title and artist name required', 'error'); return; }
+        if (!title || !artist) {
+            console.warn('[SoundMint] title="' + title + '" artist="' + artist + '" titleEl=', titleEl, 'artistEl=', artistEl);
+            toast('Song title and artist name required', 'error');
+            return;
+        }
         if (!state.audioFile) { toast('Upload an audio file', 'error'); return; }
         if (!state.coverFile) { toast('Upload cover artwork', 'error'); return; }
 
@@ -581,11 +601,16 @@ const MusicNFT = (() => {
 
     // ===================== NFT PREVIEW =====================
     function previewNFT() {
-        const title = ($('#songTitle') || {}).value?.trim() || 'Untitled Track';
-        const artist = ($('#artistName') || {}).value?.trim() || 'Unknown Artist';
-        const genre = ($('#songGenre') || {}).value || 'Music';
-        const price = ($('#nftPrice') || {}).value || '0.01';
-        const editions = ($('#editions') || {}).value || '100';
+        const titleEl = byId('songTitle') || $('#songTitle');
+        const artistEl = byId('artistName') || $('#artistName');
+        const genreEl = byId('songGenre') || $('#songGenre');
+        const priceEl = byId('nftPrice') || $('#nftPrice');
+        const editionsEl = byId('editions') || $('#editions');
+        const title = (titleEl ? titleEl.value.trim() : '') || 'Untitled Track';
+        const artist = (artistEl ? artistEl.value.trim() : '') || 'Unknown Artist';
+        const genre = (genreEl ? genreEl.value : '') || 'Music';
+        const price = (priceEl ? priceEl.value : '') || '0.01';
+        const editions = (editionsEl ? editionsEl.value : '') || '100';
 
         let coverHTML = '<div style="width:100%;aspect-ratio:1;background:var(--gradient-primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:80px;">🎵</div>';
         if (state.coverFile) {
